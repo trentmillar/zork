@@ -5,7 +5,7 @@ var SysMenu = cc.Layer.extend({
     _player: null,
 
     ctor: function () {
-        //cc.associateWithNative( this, cc.Layer );
+        cc.associateWithNative(this, cc.Layer);
     },
     init: function () {
         var bRet = false;
@@ -15,7 +15,7 @@ var SysMenu = cc.Layer.extend({
             sp.setAnchorPoint(cc.p(0, 0));
             //sp.setPosition(cc.p(0, 250));
             this.addChild(sp, 0, 1);
-
+            
             var logo = cc.Sprite.create(s_image_logo);
             var logoSize = logo.getContentSize();
             logo.setAnchorPoint(cc.p(0, 0));
@@ -35,11 +35,11 @@ var SysMenu = cc.Layer.extend({
             var aboutDisabled = cc.Sprite.create(s_image_menu, cc.rect(252, 33 * 2, 126, 33));
 
             /*var newGame = cc.MenuItemSprite.create(newGameNormal, newGameSelected, newGameDisabled, this, function () {
-                this.onButtonEffect();
-                flareEffect(this, this, this.onNewGame);
+            this.onButtonEffect();
+            flareEffect(this, this, this.onNewGame);
             });*/
             var newGame = cc.MenuItemSprite.create(newGameNormal, newGameSelected, newGameDisabled, this, this.onNewGame);
-            
+
             var gameSettings = cc.MenuItemSprite.create(gameSettingsNormal, gameSettingsSelected, gameSettingsDisabled, this, this.onSettings);
             var about = cc.MenuItemSprite.create(aboutNormal, aboutSelected, aboutDisabled, this, this.onAbout);
 
@@ -96,7 +96,7 @@ var SysMenu = cc.Layer.extend({
     },
     onButtonEffect: function () {
         if (LL.SOUND) {
-            var s = cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
+            cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
         }
     }
 });

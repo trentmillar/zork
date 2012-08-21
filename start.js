@@ -4,7 +4,7 @@ var LL = LL || {};
     var d = document;
     var c = {
         COCOS2D_DEBUG:2, //0=off, 1=less verbose, 2=full verbose
-        box2d:false,
+        box2d:true,
         showFPS:true,
         frameRate:60,
         tag:'gameCanvas',

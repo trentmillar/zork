@@ -8,31 +8,97 @@
 STATE_PLAYING = 0;
 STATE_GAMEOVER = 1;
 
+var TAG_SPRITE_MANAGER = 1;
+var PTM_RATIO = 32;
+
 var GameLayer = cc.Layer.extend({
-    _time:null,
-    _player:null,
-    _backSky:null,
-    _backSkyHeight:0,
-    _backSkyRe:null,
-    _backTileMap:null,
-    _backTileMapHeight:0,
-    _backTileMapRe:null,
-    _levelManager:null,
-    _tmpScore:0,
-    _isBackSkyReload:false,
-    _isBackTileReload:false,
-    lbScore:null,
-    screenRect:null,
-    explosionAnimation:[],
-    _beginPos:cc.p(0, 0),
-    _state:STATE_PLAYING,
-    _isTouch:false,
-    ctor:function () {
-        cc.associateWithNative( this, cc.Layer );
+    _time: null,
+    _player: null,
+    _backSky: null,
+    _backSkyHeight: 0,
+    _backSkyRe: null,
+    _backTileMap: null,
+    _backTileMapHeight: 0,
+    _backTileMapRe: null,
+    _levelManager: null,
+    _tmpScore: 0,
+    _isBackSkyReload: false,
+    _isBackTileReload: false,
+    lbScore: null,
+    screenRect: null,
+    explosionAnimation: [],
+    _beginPos: cc.p(0, 0),
+    _state: STATE_PLAYING,
+    _isTouch: false,
+    //box2d
+    _world:null,
+    ctor: function () {
+        //cc.associateWithNative(this, cc.Layer);
     },
-    init:function () {
+    init: function () {
         var bRet = false;
         if (this._super()) {
+            
+            var winSize = cc.Director.getInstance().getWinSize();
+            
+            //box2d
+            var b2Vec2 = Box2D.Common.Math.b2Vec2
+            , b2BodyDef = Box2D.Dynamics.b2BodyDef
+            , b2Body = Box2D.Dynamics.b2Body
+            , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+            , b2World = Box2D.Dynamics.b2World
+            , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+
+            // Construct a world object, which will hold and simulate the rigid bodies.
+            this._world = new b2World(new b2Vec2(0, 10), true);
+            this._world.SetContinuousPhysics(true);
+            
+            // Call the body factory which allocates memory for the ground body
+        // from a pool and creates the ground box shape (also from a pool).
+        // The body is also added to the world.
+        //var groundBody = this.world.CreateBody(groundBodyDef);
+
+        var fixDef = new b2FixtureDef;
+        fixDef.density = 1.0;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.2;
+
+        var bodyDef = new b2BodyDef;
+
+        //create ground
+        bodyDef.type = b2Body.b2_staticBody;
+        fixDef.shape = new b2PolygonShape;
+        fixDef.shape.SetAsBox(20, 2);
+        // upper
+        bodyDef.position.Set(10, winSize.height / PTM_RATIO + 1.8);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // bottom
+        bodyDef.position.Set(10, -1.8);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+        fixDef.shape.SetAsBox(2, 14);
+        // left
+        bodyDef.position.Set(-1.8, 13);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // right
+        bodyDef.position.Set(26.8, 13);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        
+        //Set up sprite
+
+        var mgr = cc.SpriteBatchNode.create(s_image_hit, 150);
+        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
+
+        this.addNewSpriteWithCoords(cc.p(winSize.width / 2, winSize.height / 2));
+/*
+
+        var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
+        this.addChild(label, 0);
+        label.setColor(cc.c3b(0, 0, 255));
+        label.setPosition(cc.p(screenSize.width / 2, screenSize.height - 50));
+*/
+
+
             // reset global values
             LL.CONTAINER.ENEMIES = [];
             LL.CONTAINER.ENEMY_BULLETS = [];
@@ -46,16 +112,15 @@ var GameLayer = cc.Layer.extend({
             Enemy.sharedEnemy();
             Player.sharedPlayer();
 
-            winSize = cc.Director.getInstance().getWinSize();
             this._levelManager = new LevelManager(this);
             this.initBackground();
             this.screenRect = cc.rect(0, 0, winSize.width, winSize.height + 10);
 
             // score
-            this.lbScore = cc.LabelTTF.create("Score: 0", "Arial",14,cc.SizeMake(80,14),cc.TEXT_ALIGNMENT_RIGHT);
-            this.lbScore.setAnchorPoint(cc.p(1,0));
+            this.lbScore = cc.LabelTTF.create("Score: 0", "Arial", 14, cc.SizeMake(80, 14), cc.TEXT_ALIGNMENT_RIGHT);
+            this.lbScore.setAnchorPoint(cc.p(1, 0));
             this.addChild(this.lbScore, 1000);
-            this.lbScore.setPosition(cc.p(winSize.width - 5 , winSize.height - 20));
+            this.lbScore.setPosition(cc.p(winSize.width - 5, winSize.height - 20));
 
             // life counter in top left
             var playerTexture = cc.TextureCache.getInstance().addImage(s_image_player_sprite);
@@ -77,12 +142,12 @@ var GameLayer = cc.Layer.extend({
             // accept touch now!
 
             var t = cc.config.deviceType;
-            if( t == 'browser' )  {
+            if (t == 'browser') {
                 this.setTouchEnabled(true);
                 this.setKeyboardEnabled(true);
-            } else if( t == 'desktop' ) {
+            } else if (t == 'desktop') {
                 this.setMouseEnabled(true);
-            } else if( t == 'mobile' ) {
+            } else if (t == 'mobile') {
                 this.setTouchEnabled(true);
             }
 
@@ -98,8 +163,46 @@ var GameLayer = cc.Layer.extend({
         }
         return bRet;
     },
-    scoreCounter:function () {
-        if( this._state == STATE_PLAYING ) {
+    addNewSpriteWithCoords:function (p) {
+        //UXLog(L"Add sprite %0.2f x %02.f",p.x,p.y);
+        var batch = this.getChildByTag(TAG_SPRITE_MANAGER);
+
+        //We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
+        //just randomly picking one of the images
+        var idx = (cc.RANDOM_0_1() > .5 ? 0 : 1);
+        var idy = (cc.RANDOM_0_1() > .5 ? 0 : 1);
+        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(32 * idx, 32 * idy, 32, 32));
+        batch.addChild(sprite);
+
+        sprite.setPosition(cc.p(p.x, p.y));
+
+        // Define the dynamic body.
+        //Set up a 1m squared box in the physics world
+        var b2BodyDef = Box2D.Dynamics.b2BodyDef
+            , b2Body = Box2D.Dynamics.b2Body
+            , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+            , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+
+        var bodyDef = new b2BodyDef();
+        bodyDef.type = b2Body.b2_dynamicBody;
+        bodyDef.position.Set(p.x / PTM_RATIO, p.y / PTM_RATIO);
+        bodyDef.userData = sprite;
+        var body = this.world.CreateBody(bodyDef);
+
+        // Define another box shape for our dynamic body.
+        var dynamicBox = new b2PolygonShape();
+        dynamicBox.SetAsBox(0.5, 0.5);//These are mid points for our 1m box
+
+        // Define the dynamic body fixture.
+        var fixtureDef = new b2FixtureDef();
+        fixtureDef.shape = dynamicBox;
+        fixtureDef.density = 1.0;
+        fixtureDef.friction = 0.3;
+        body.CreateFixture(fixtureDef);
+
+    },
+    scoreCounter: function () {
+        if (this._state == STATE_PLAYING) {
             this._time++;
 
             var minute = 0 | (this._time / 60);
@@ -110,56 +213,80 @@ var GameLayer = cc.Layer.extend({
             this._levelManager.loadLevelResource(this._time);
         }
     },
-    onTouchesBegan:function(touches, event){
+    onTouchesBegan: function (touches, event) {
         this._isTouch = true;
     },
-    onTouchesMoved:function (touches, event) {
-        if(this._isTouch){
+    onTouchesMoved: function (touches, event) {
+        if (this._isTouch) {
             this.processEvent(touches[0]);
         }
     },
-    onTouchesEnded:function(touches, event){
+    onTouchesEnded: function (touches, event) {
         this._isTouch = false;
     },
-    onMouseDragged:function( event ) {
-        if(this._isTouch){
-            this.processEvent( event );
+    onMouseDragged: function (event) {
+        if (this._isTouch) {
+            this.processEvent(event);
         }
     },
 
-    processEvent:function( event ) {
-        if( this._state == STATE_PLAYING ) {
+    processEvent: function (event) {
+        if (this._state == STATE_PLAYING) {
             var delta = event.getDelta();
             var curPos = this._player.getPosition();
-            curPos= cc.pAdd( curPos, delta );
-            curPos = cc.pClamp(curPos, cc.POINT_ZERO, cc.p(winSize.width, winSize.height) );
-            this._player.setPosition( curPos );
+            curPos = cc.pAdd(curPos, delta);
+            curPos = cc.pClamp(curPos, cc.POINT_ZERO, cc.p(winSize.width, winSize.height));
+            this._player.setPosition(curPos);
         }
     },
 
-    onKeyDown:function (e) {
+    onKeyDown: function (e) {
         LL.KEYS[e] = true;
     },
 
-    onKeyUp:function (e) {
+    onKeyUp: function (e) {
         LL.KEYS[e] = false;
     },
 
-    update:function (dt) {
-        if( this._state == STATE_PLAYING ) {
+    update: function (dt) {
+        if (this._state == STATE_PLAYING) {
             this.checkIsCollide();
             this.removeInactiveUnit(dt);
             this.checkIsReborn();
             this.updateUI();
+
+            /*BOX2D*/
+            //It is recommended that a fixed time step is used with Box2D for stability
+            //of the simulation, however, we are using a variable time step here.
+            //You need to make an informed choice, the following URL is useful
+            //http://gafferongames.com/game-physics/fix-your-timestep/
+
+            var velocityIterations = 8;
+            var positionIterations = 1;
+
+            // Instruct the world to perform a single step of simulation. It is
+            // generally best to keep the time step and iterations fixed.
+            this.world.Step(dt, velocityIterations, positionIterations);
+
+            //Iterate over the bodies in the physics world
+            for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
+                if (b.GetUserData() != null) {
+                    //Synchronize the AtlasSprites position and rotation with the corresponding body
+                    var myActor = b.GetUserData();
+                    myActor.setPosition(cc.p(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO));
+                    myActor.setRotation(-1 * cc.RADIANS_TO_DEGREES(b.GetAngle()));
+                    //console.log(b.GetAngle());
+                }
+            }
         }
 
         //if( cc.config.deviceType == 'browser' )
-         //   cc.$("#cou").innerHTML = "Ship:" + 1 + ", Enemy: " + LL.CONTAINER.ENEMIES.length + ", Bullet:" + LL.CONTAINER.ENEMY_BULLETS.length + "," + LL.CONTAINER.PLAYER_BULLETS.length + " all:" + this.getChildren().length;
+        //   cc.$("#cou").innerHTML = "Ship:" + 1 + ", Enemy: " + LL.CONTAINER.ENEMIES.length + ", Bullet:" + LL.CONTAINER.ENEMY_BULLETS.length + "," + LL.CONTAINER.PLAYER_BULLETS.length + " all:" + this.getChildren().length;
     },
-    checkIsCollide:function () {
+    checkIsCollide: function () {
         var selChild, bulletChild;
         //check collide
-        var i =0;
+        var i = 0;
         for (i = 0; i < LL.CONTAINER.ENEMIES.length; i++) {
             selChild = LL.CONTAINER.ENEMIES[i];
             for (var j = 0; j < LL.CONTAINER.PLAYER_BULLETS.length; j++) {
@@ -168,7 +295,7 @@ var GameLayer = cc.Layer.extend({
                     bulletChild.hurt();
                     selChild.hurt();
                 }
-                if (!cc.rectIntersectsRect(this.screenRect, bulletChild.getBoundingBox() )) {
+                if (!cc.rectIntersectsRect(this.screenRect, bulletChild.getBoundingBox())) {
                     bulletChild.destroy();
                 }
             }
@@ -178,7 +305,7 @@ var GameLayer = cc.Layer.extend({
                     this._player.hurt();
                 }
             }
-            if (!cc.rectIntersectsRect(this.screenRect, selChild.getBoundingBox() )) {
+            if (!cc.rectIntersectsRect(this.screenRect, selChild.getBoundingBox())) {
                 selChild.destroy();
             }
         }
@@ -191,17 +318,17 @@ var GameLayer = cc.Layer.extend({
                     this._player.hurt();
                 }
             }
-            if (!cc.rectIntersectsRect(this.screenRect, selChild.getBoundingBox() )) {
+            if (!cc.rectIntersectsRect(this.screenRect, selChild.getBoundingBox())) {
                 selChild.destroy();
             }
         }
     },
-    removeInactiveUnit:function (dt) {
+    removeInactiveUnit: function (dt) {
         var selChild, layerChildren = this.getChildren();
         for (var i in layerChildren) {
             selChild = layerChildren[i];
             if (selChild) {
-                if( typeof selChild.update == 'function' ) {
+                if (typeof selChild.update == 'function') {
                     selChild.update(dt);
                     var tag = selChild.getTag();
                     if ((tag == LL.UNIT_TAG.PLAYER) || (tag == LL.UNIT_TAG.PLAYER_BULLET) ||
@@ -214,7 +341,7 @@ var GameLayer = cc.Layer.extend({
             }
         }
     },
-    checkIsReborn:function () {
+    checkIsReborn: function () {
         if (LL.LIFE > 0 && !this._player.active) {
             // ship
             this._player = new Player();
@@ -229,21 +356,21 @@ var GameLayer = cc.Layer.extend({
                 cc.CallFunc.create(this, this.onGameOver)));
         }
     },
-    updateUI:function () {
+    updateUI: function () {
         if (this._tmpScore < LL.SCORE) {
             this._tmpScore += 5;
         }
         this._lbLife.setString(LL.LIFE);
         this.lbScore.setString("Score: " + this._tmpScore);
     },
-    collide:function (a, b) {
+    collide: function (a, b) {
         var aRect = a.collideRect();
         var bRect = b.collideRect();
         if (cc.rectIntersectsRect(aRect, bRect)) {
             return true;
         }
     },
-    initBackground:function () {
+    initBackground: function () {
         // bg
         this._backSky = cc.Sprite.create(s_image_background_01);
         this._backSky.setAnchorPoint(cc.p(0, 0));
@@ -255,6 +382,7 @@ var GameLayer = cc.Layer.extend({
         this.addChild(this._backTileMap, -9);
         this._backTileMapHeight = this._backTileMap.getMapSize().height * this._backTileMap.getTileSize().height;
 
+        //start scrolling
         this._backSkyHeight -= 48;
         this._backTileMapHeight -= 200;
         this._backSky.runAction(cc.MoveBy.create(3, cc.p(0, -48)));
@@ -262,7 +390,7 @@ var GameLayer = cc.Layer.extend({
 
         this.schedule(this.movingBackground, 3);
     },
-    movingBackground:function () {
+    movingBackground: function () {
         this._backSky.runAction(cc.MoveBy.create(3, cc.p(0, -48)));
         this._backTileMap.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
         this._backSkyHeight -= 48;
@@ -292,6 +420,8 @@ var GameLayer = cc.Layer.extend({
                 this.addChild(this._backTileMapRe, -9);
                 this._backTileMapRe.setPosition(cc.p(0, winSize.height));
                 this._isBackTileReload = true;
+                var t = this._backTileMapRe.objectGroupNamed("objects");
+                t.
             }
             this._backTileMapRe.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
         }
@@ -303,7 +433,7 @@ var GameLayer = cc.Layer.extend({
             this._isBackTileReload = false;
         }
     },
-    onGameOver:function () {
+    onGameOver: function () {
         var scene = cc.Scene.create();
         scene.addChild(GameOver.create());
         cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
