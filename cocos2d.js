@@ -1,4 +1,4 @@
-var MW = MW || {};
+var LL = LL || {};
 
 (function () {
     var d = document;

@@ -7,8 +7,8 @@ var Bullet = cc.Sprite.extend({
     HP:1,
     moveType:null,
     zOrder:3000,
-    attackMode:MW.ENEMY_MOVE_TYPE.NORMAL,
-    parentType:MW.BULLET_TYPE.PLAYER,
+    attackMode:LL.ENEMY_MOVE_TYPE.NORMAL,
+    parentType:LL.BULLET_TYPE.PLAYER,
     ctor:function (bulletSpeed, weaponType, attackMode) {
         // needed for JS-Bindings compatibility
         cc.associateWithNative( this, cc.Sprite );
@@ -22,10 +22,10 @@ var Bullet = cc.Sprite.extend({
 
         var tmpAction;
          switch (this.attackMode) {
-         case MW.ENEMY_MOVE_TYPE.NORMAL:
+         case LL.ENEMY_MOVE_TYPE.NORMAL:
          tmpAction = cc.MoveBy.create(2, cc.p(this.getPosition().x, 400));
          break;
-         case MW.ENEMY_ATTACK_MODE.TSUIHIKIDAN:
+         case LL.ENEMY_ATTACK_MODE.TSUIHIKIDAN:
          tmpAction = cc.MoveTo.create(2, GameLayer.create()._player.getPosition());
          break;
          }
@@ -42,14 +42,14 @@ var Bullet = cc.Sprite.extend({
         }
     },
     destroy:function () {
-        var explode = cc.Sprite.create(s_hit);
+        var explode = cc.Sprite.create(s_image_hit);
         explode.setBlendFunc(gl.SRC_ALPHA, gl.ONE);
         explode.setPosition(this.getPosition());
         explode.setRotation(Math.random()*360);
         explode.setScale(0.75);
         this.getParent().addChild(explode,9999);
-        cc.ArrayRemoveObject(MW.CONTAINER.ENEMY_BULLETS,this);
-        cc.ArrayRemoveObject(MW.CONTAINER.PLAYER_BULLETS,this);
+        cc.ArrayRemoveObject(LL.CONTAINER.ENEMY_BULLETS,this);
+        cc.ArrayRemoveObject(LL.CONTAINER.PLAYER_BULLETS,this);
         this.removeFromParentAndCleanup(true);
         var removeExplode = cc.CallFunc.create(explode,explode.removeFromParentAndCleanup);
         explode.runAction(cc.ScaleBy.create(0.3, 2,2));

@@ -57,7 +57,7 @@ var SysMenu = cc.Layer.extend({
             this._player.setPosition(pos);
             this._player.runAction(cc.MoveBy.create(2, cc.p(Math.random() * winSize.width, pos.y + winSize.height + 100)));
 
-            if (MW.SOUND) {
+            if (LL.SOUND) {
                 cc.AudioEngine.getInstance().setBackgroundMusicVolume(0.7);
                 cc.AudioEngine.getInstance().playBackgroundMusic(s_music_theme, true);
             }
@@ -95,7 +95,7 @@ var SysMenu = cc.Layer.extend({
         }
     },
     onButtonEffect: function () {
-        if (MW.SOUND) {
+        if (LL.SOUND) {
             var s = cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
         }
     }

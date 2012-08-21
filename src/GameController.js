@@ -16,12 +16,12 @@
  */
 
 
-MW.GameController = cc.Class.extend({
+LL.GameController = cc.Class.extend({
     _curScene:null,
-    _gameState:MW.GAME_STATE.HOME,
+    _gameState:LL.GAME_STATE.HOME,
     _isNewGame:true,
-    _curLevel:MW.LEVEL.STAGE1,
-    _selectLevel:MW.LEVEL.STAGE1,
+    _curLevel:LL.LEVEL.STAGE1,
+    _selectLevel:LL.LEVEL.STAGE1,
     init:function () {
         return true;
     },
@@ -54,10 +54,10 @@ MW.GameController = cc.Class.extend({
     }
 });
 
-MW.GameController.getInstance = function () {
+LL.GameController.getInstance = function () {
     cc.Assert(this._sharedGame, "Havn't call setSharedGame");
     if (!this._sharedGame) {
-        this._sharedGame = new MW.GameController();
+        this._sharedGame = new LL.GameController();
         if (this._sharedGame.init()) {
             return this._sharedGame;
         }
@@ -67,4 +67,4 @@ MW.GameController.getInstance = function () {
     return null;
 };
 
-MW.GameController._sharedGame = null;
+LL.GameController._sharedGame = null;

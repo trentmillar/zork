@@ -34,11 +34,11 @@ var GameLayer = cc.Layer.extend({
         var bRet = false;
         if (this._super()) {
             // reset global values
-            MW.CONTAINER.ENEMIES = [];
-            MW.CONTAINER.ENEMY_BULLETS = [];
-            MW.CONTAINER.PLAYER_BULLETS = [];
-            MW.SCORE = 0;
-            MW.LIFE = 4;
+            LL.CONTAINER.ENEMIES = [];
+            LL.CONTAINER.ENEMY_BULLETS = [];
+            LL.CONTAINER.PLAYER_BULLETS = [];
+            LL.SCORE = 0;
+            LL.LIFE = 4;
             this._state = STATE_PLAYING;
 
             //load up singleton magic
@@ -72,7 +72,7 @@ var GameLayer = cc.Layer.extend({
 
             // ship
             this._player = new Player();
-            this.addChild(this._player, this._player.zOrder, MW.UNIT_TAG.PLAYER);
+            this.addChild(this._player, this._player.zOrder, LL.UNIT_TAG.PLAYER);
 
             // accept touch now!
 
@@ -90,7 +90,7 @@ var GameLayer = cc.Layer.extend({
             this.scheduleUpdate();
             this.schedule(this.scoreCounter, 1);
 
-            if (MW.SOUND) {
+            if (LL.SOUND) {
                 cc.AudioEngine.getInstance().playBackgroundMusic(s_music_theme, true);
             }
 
@@ -138,11 +138,11 @@ var GameLayer = cc.Layer.extend({
     },
 
     onKeyDown:function (e) {
-        MW.KEYS[e] = true;
+        LL.KEYS[e] = true;
     },
 
     onKeyUp:function (e) {
-        MW.KEYS[e] = false;
+        LL.KEYS[e] = false;
     },
 
     update:function (dt) {
@@ -154,16 +154,16 @@ var GameLayer = cc.Layer.extend({
         }
 
         //if( cc.config.deviceType == 'browser' )
-         //   cc.$("#cou").innerHTML = "Ship:" + 1 + ", Enemy: " + MW.CONTAINER.ENEMIES.length + ", Bullet:" + MW.CONTAINER.ENEMY_BULLETS.length + "," + MW.CONTAINER.PLAYER_BULLETS.length + " all:" + this.getChildren().length;
+         //   cc.$("#cou").innerHTML = "Ship:" + 1 + ", Enemy: " + LL.CONTAINER.ENEMIES.length + ", Bullet:" + LL.CONTAINER.ENEMY_BULLETS.length + "," + LL.CONTAINER.PLAYER_BULLETS.length + " all:" + this.getChildren().length;
     },
     checkIsCollide:function () {
         var selChild, bulletChild;
         //check collide
         var i =0;
-        for (i = 0; i < MW.CONTAINER.ENEMIES.length; i++) {
-            selChild = MW.CONTAINER.ENEMIES[i];
-            for (var j = 0; j < MW.CONTAINER.PLAYER_BULLETS.length; j++) {
-                bulletChild = MW.CONTAINER.PLAYER_BULLETS[j];
+        for (i = 0; i < LL.CONTAINER.ENEMIES.length; i++) {
+            selChild = LL.CONTAINER.ENEMIES[i];
+            for (var j = 0; j < LL.CONTAINER.PLAYER_BULLETS.length; j++) {
+                bulletChild = LL.CONTAINER.PLAYER_BULLETS[j];
                 if (this.collide(selChild, bulletChild)) {
                     bulletChild.hurt();
                     selChild.hurt();
@@ -183,8 +183,8 @@ var GameLayer = cc.Layer.extend({
             }
         }
 
-        for (i = 0; i < MW.CONTAINER.ENEMY_BULLETS.length; i++) {
-            selChild = MW.CONTAINER.ENEMY_BULLETS[i];
+        for (i = 0; i < LL.CONTAINER.ENEMY_BULLETS.length; i++) {
+            selChild = LL.CONTAINER.ENEMY_BULLETS[i];
             if (this.collide(selChild, this._player)) {
                 if (this._player.active) {
                     selChild.hurt();
@@ -204,8 +204,8 @@ var GameLayer = cc.Layer.extend({
                 if( typeof selChild.update == 'function' ) {
                     selChild.update(dt);
                     var tag = selChild.getTag();
-                    if ((tag == MW.UNIT_TAG.PLAYER) || (tag == MW.UNIT_TAG.PLAYER_BULLET) ||
-                        (tag == MW.UNIT_TAG.ENEMY) || (tag == MW.UNIT_TAG.ENMEY_BULLET)) {
+                    if ((tag == LL.UNIT_TAG.PLAYER) || (tag == LL.UNIT_TAG.PLAYER_BULLET) ||
+                        (tag == LL.UNIT_TAG.ENEMY) || (tag == LL.UNIT_TAG.ENMEY_BULLET)) {
                         if (selChild && !selChild.active) {
                             selChild.destroy();
                         }
@@ -215,12 +215,12 @@ var GameLayer = cc.Layer.extend({
         }
     },
     checkIsReborn:function () {
-        if (MW.LIFE > 0 && !this._player.active) {
+        if (LL.LIFE > 0 && !this._player.active) {
             // ship
             this._player = new Player();
-            this.addChild(this._player, this._player.zOrder, MW.UNIT_TAG.PLAYER);
+            this.addChild(this._player, this._player.zOrder, LL.UNIT_TAG.PLAYER);
         }
-        else if (MW.LIFE <= 0 && !this._player.active) {
+        else if (LL.LIFE <= 0 && !this._player.active) {
             this._state = STATE_GAMEOVER;
             // XXX: needed for JS bindings.
             this._player = null;
@@ -230,10 +230,10 @@ var GameLayer = cc.Layer.extend({
         }
     },
     updateUI:function () {
-        if (this._tmpScore < MW.SCORE) {
+        if (this._tmpScore < LL.SCORE) {
             this._tmpScore += 5;
         }
-        this._lbLife.setString(MW.LIFE);
+        this._lbLife.setString(LL.LIFE);
         this.lbScore.setString("Score: " + this._tmpScore);
     },
     collide:function (a, b) {

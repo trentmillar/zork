@@ -1,0 +1,1 @@
+.\libs\ant\bin\ant -buildfile .\build.xml compile

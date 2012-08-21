@@ -33,7 +33,7 @@ var GameOver = cc.Layer.extend({
             this.addChild(menu, 1, 2);
             menu.setPosition(cc.p(winSize.width / 2, 220));
 
-            var lbScore = cc.LabelTTF.create("Your Score:"+MW.SCORE,"Arial Bold",16);
+            var lbScore = cc.LabelTTF.create("Your Score:"+LL.SCORE,"Arial Bold",16);
             lbScore.setPosition(cc.p(160,280));
             lbScore.setColor(cc.c3b(250,179,0));
             this.addChild(lbScore,10);
@@ -52,7 +52,7 @@ var GameOver = cc.Layer.extend({
             this.addChild(cocos2dMenu);
 
 
-            if(MW.SOUND){
+            if(LL.SOUND){
                 cc.AudioEngine.getInstance().playBackgroundMusic(s_music_theme);
             }
 

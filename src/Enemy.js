@@ -9,7 +9,7 @@ var Enemy = cc.Sprite.extend({
     scoreValue:200,
     zOrder:1000,
     delayTime:1 + 1.2 * Math.random(),
-    attackMode:MW.ENEMY_MOVE_TYPE.NORMAL,
+    attackMode:LL.ENEMY_MOVE_TYPE.NORMAL,
     _hurtColorLife:0,
     ctor:function (arg) {
         // needed for JS-Bindings compatibility
@@ -40,22 +40,22 @@ var Enemy = cc.Sprite.extend({
         }
     },
     destroy:function () {
-        MW.SCORE += this.scoreValue;
+        LL.SCORE += this.scoreValue;
         var a = new Explosion();
         a.setPosition(this.getPosition());
         this.getParent().addChild(a);
         //spark(this.getPosition(),this.getParent(), 1.2, 0.7);
-        cc.ArrayRemoveObject(MW.CONTAINER.ENEMIES,this);
+        cc.ArrayRemoveObject(LL.CONTAINER.ENEMIES,this);
         this.removeFromParentAndCleanup(true);
-        if(MW.SOUND){
+        if(LL.SOUND){
             cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
         }
     },
     shoot:function () {
         var p = this.getPosition();
         var b = new Bullet(this.bulletSpeed, "W2.png", this.attackMode);
-        MW.CONTAINER.ENEMY_BULLETS.push(b);
-        this.getParent().addChild(b, b.zOrder, MW.UNIT_TAG.ENMEY_BULLET);
+        LL.CONTAINER.ENEMY_BULLETS.push(b);
+        this.getParent().addChild(b, b.zOrder, LL.UNIT_TAG.ENMEY_BULLET);
         b.setPosition(cc.p(p.x, p.y - this.getContentSize().height * 0.2));
     },
     hurt:function () {

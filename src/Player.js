@@ -101,16 +101,16 @@ var Player = cc.Sprite.extend({
         // Keys are only enabled on the browser
         if( cc.config.deviceType == 'browser' ) {
             var pos = this.getPosition();
-            if ((MW.KEYS[cc.KEY.w] || MW.KEYS[cc.KEY.up]) && pos.y <= winSize.height) {
+            if ((LL.KEYS[cc.KEY.w] || LL.KEYS[cc.KEY.up]) && pos.y <= winSize.height) {
                 pos.y += dt * this.speed;
             }
-            if ((MW.KEYS[cc.KEY.s] || MW.KEYS[cc.KEY.down]) && pos.y >= 0) {
+            if ((LL.KEYS[cc.KEY.s] || LL.KEYS[cc.KEY.down]) && pos.y >= 0) {
                 pos.y -= dt * this.speed;
             }
-            if ((MW.KEYS[cc.KEY.a] || MW.KEYS[cc.KEY.left]) && pos.x >= 0) {
+            if ((LL.KEYS[cc.KEY.a] || LL.KEYS[cc.KEY.left]) && pos.x >= 0) {
                 pos.x -= dt * this.speed;
             }
-            if ((MW.KEYS[cc.KEY.d] || MW.KEYS[cc.KEY.right]) && pos.x <= winSize.width) {
+            if ((LL.KEYS[cc.KEY.d] || LL.KEYS[cc.KEY.right]) && pos.x <= winSize.width) {
                 pos.x += dt * this.speed;
             }
             this.setPosition( pos );
@@ -135,23 +135,23 @@ var Player = cc.Sprite.extend({
         var offset = 13;
         var p = this.getPosition();
         var cs = this.getContentSize();
-        var a = new Bullet(this.bulletSpeed, "W1.png", MW.ENEMY_MOVE_TYPE.NORMAL);
-        MW.CONTAINER.PLAYER_BULLETS.push(a);
-        this.getParent().addChild(a, a.zOrder, MW.UNIT_TAG.PLAYER_BULLET);
+        var a = new Bullet(this.bulletSpeed, "W1.png", LL.ENEMY_MOVE_TYPE.NORMAL);
+        LL.CONTAINER.PLAYER_BULLETS.push(a);
+        this.getParent().addChild(a, a.zOrder, LL.UNIT_TAG.PLAYER_BULLET);
         a.setPosition(cc.p(p.x + offset, p.y + 3 + cs.height * 0.3));
 
-        var b = new Bullet(this.bulletSpeed, "W1.png", MW.ENEMY_MOVE_TYPE.NORMAL);
-        MW.CONTAINER.PLAYER_BULLETS.push(b);
-        this.getParent().addChild(b, b.zOrder, MW.UNIT_TAG.PLAYER_BULLET);
+        var b = new Bullet(this.bulletSpeed, "W1.png", LL.ENEMY_MOVE_TYPE.NORMAL);
+        LL.CONTAINER.PLAYER_BULLETS.push(b);
+        this.getParent().addChild(b, b.zOrder, LL.UNIT_TAG.PLAYER_BULLET);
         b.setPosition(cc.p(p.x - offset, p.y + 3 + cs.height * 0.3));
     },
     destroy:function () {
-        MW.LIFE--;
+        LL.LIFE--;
         var p = this.getPosition();
         var myParent = this.getParent();
         myParent.addChild( new Explosion(p) );
         myParent.removeChild(this,true);
-        if (MW.SOUND) {
+        if (LL.SOUND) {
             cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
         }
     },

@@ -16,33 +16,33 @@
  */
 
 //game state
-MW.GAME_STATE = {
+LL.GAME_STATE = {
     HOME:0,
     PLAY:1,
     OVER:2
 };
 
 //keys
-MW.KEYS = [];
+LL.KEYS = [];
 
 //level
-MW.LEVEL = {
+LL.LEVEL = {
     STAGE1:1,
     STAGE2:2,
     STAGE3:3
 };
 
 //life
-MW.LIFE = 4;
+LL.LIFE = 4;
 
 //score
-MW.SCORE = 0;
+LL.SCORE = 0;
 
 //sound
-MW.SOUND = true;
+LL.SOUND = true;
 
 //enemy move type
-MW.ENEMY_MOVE_TYPE = {
+LL.ENEMY_MOVE_TYPE = {
     ATTACK:0,
     VERTICAL:1,
     HORIZONTAL:2,
@@ -50,27 +50,27 @@ MW.ENEMY_MOVE_TYPE = {
 };
 
 //delta x
-MW.DELTA_X = -100;
+LL.DELTA_X = -100;
 
 //offset x
-MW.OFFSET_X = -24;
+LL.OFFSET_X = -24;
 
 //rot
-MW.ROT = -5.625;
+LL.ROT = -5.625;
 
 //bullet type
-MW.BULLET_TYPE = {
+LL.BULLET_TYPE = {
     PLAYER:1,
     ENEMY:2
 };
 
 //weapon type
-MW.WEAPON_TYPE = {
+LL.WEAPON_TYPE = {
     ONE:1
 };
 
 //unit tag
-MW.UNIT_TAG = {
+LL.UNIT_TAG = {
     ENMEY_BULLET:900,
     PLAYER_BULLET:901,
     ENEMY:1000,
@@ -78,16 +78,16 @@ MW.UNIT_TAG = {
 };
 
 //attack mode
-MW.ENEMY_ATTACK_MODE = {
+LL.ENEMY_ATTACK_MODE = {
     NORMAL:1,
     TSUIHIKIDAN:2
 };
 
 //life up sorce
-MW.LIFEUP_SORCE = [50000, 100000, 150000, 200000, 250000, 300000];
+LL.LIFEUP_SORCE = [50000, 100000, 150000, 200000, 250000, 300000];
 
 //container
-MW.CONTAINER = {
+LL.CONTAINER = {
     ENEMIES:[],
     ENEMY_BULLETS:[],
     PLAYER_BULLETS:[]
