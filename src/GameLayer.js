@@ -33,14 +33,14 @@ var GameLayer = cc.Layer.extend({
     //box2d
     _world:null,
     ctor: function () {
-        //cc.associateWithNative(this, cc.Layer);
+        cc.associateWithNative(this, cc.Layer);
     },
     init: function () {
         var bRet = false;
         if (this._super()) {
             
             var winSize = cc.Director.getInstance().getWinSize();
-            
+
             //box2d
             var b2Vec2 = Box2D.Common.Math.b2Vec2
             , b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -52,7 +52,7 @@ var GameLayer = cc.Layer.extend({
             // Construct a world object, which will hold and simulate the rigid bodies.
             this._world = new b2World(new b2Vec2(0, 10), true);
             this._world.SetContinuousPhysics(true);
-            
+
             // Call the body factory which allocates memory for the ground body
         // from a pool and creates the ground box shape (also from a pool).
         // The body is also added to the world.
@@ -71,18 +71,18 @@ var GameLayer = cc.Layer.extend({
         fixDef.shape.SetAsBox(20, 2);
         // upper
         bodyDef.position.Set(10, winSize.height / PTM_RATIO + 1.8);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        this._world.CreateBody(bodyDef).CreateFixture(fixDef);
         // bottom
         bodyDef.position.Set(10, -1.8);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        this._world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         fixDef.shape.SetAsBox(2, 14);
         // left
         bodyDef.position.Set(-1.8, 13);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        this._world.CreateBody(bodyDef).CreateFixture(fixDef);
         // right
         bodyDef.position.Set(26.8, 13);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        this._world.CreateBody(bodyDef).CreateFixture(fixDef);
         
         //Set up sprite
 
@@ -187,7 +187,7 @@ var GameLayer = cc.Layer.extend({
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(p.x / PTM_RATIO, p.y / PTM_RATIO);
         bodyDef.userData = sprite;
-        var body = this.world.CreateBody(bodyDef);
+        var body = this._world.CreateBody(bodyDef);
 
         // Define another box shape for our dynamic body.
         var dynamicBox = new b2PolygonShape();
@@ -266,10 +266,10 @@ var GameLayer = cc.Layer.extend({
 
             // Instruct the world to perform a single step of simulation. It is
             // generally best to keep the time step and iterations fixed.
-            this.world.Step(dt, velocityIterations, positionIterations);
+            this._world.Step(dt, velocityIterations, positionIterations);
 
             //Iterate over the bodies in the physics world
-            for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
+            for (var b = this._world.GetBodyList(); b; b = b.GetNext()) {
                 if (b.GetUserData() != null) {
                     //Synchronize the AtlasSprites position and rotation with the corresponding body
                     var myActor = b.GetUserData();
@@ -421,7 +421,6 @@ var GameLayer = cc.Layer.extend({
                 this._backTileMapRe.setPosition(cc.p(0, winSize.height));
                 this._isBackTileReload = true;
                 var t = this._backTileMapRe.objectGroupNamed("objects");
-                t.
             }
             this._backTileMapRe.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
         }
