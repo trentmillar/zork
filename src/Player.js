@@ -22,7 +22,6 @@ var Player = cc.Sprite.extend({
         // needed for JS-Bindings compatibility
         cc.associateWithNative( this, cc.Sprite );
 
-
         //init life
         //var playerTexture = cc.TextureCache.getInstance().addImage(s_image_player_sprite);
         var playerTexture = cc.SpriteFrameCache.getInstance().getSpriteFrame("idle01.png");

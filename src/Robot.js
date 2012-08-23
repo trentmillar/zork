@@ -1,4 +1,6 @@
-var Enemy = cc.Sprite.extend({
+var TAG_SPRITE_MANAGER=69;
+
+var Robot = cc.Sprite.extend({
     eID:0,
     active:true,
     speed:200,
@@ -9,11 +11,15 @@ var Enemy = cc.Sprite.extend({
     scoreValue:200,
     zOrder:1000,
     delayTime:10 + 1.2 * Math.random(),
-    attackMode:LL.ENEMY_MOVE_TYPE.NORMAL,
+    attackMode:LL.ENEMY_MOVE_TYPE.SEEKER,
     _hurtColorLife:0,
     ctor:function (arg) {
         // needed for JS-Bindings compatibility
         cc.associateWithNative( this, cc.Sprite );
+
+
+        var mgr = cc.SpriteBatchNode.create(s_image_triangle, 15);
+        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
         this.HP = arg.HP;
         this.moveType = arg.moveType;
@@ -27,16 +33,20 @@ var Enemy = cc.Sprite.extend({
     update:function (dt) {
         if (this.HP <= 0) {
             this.active = false;
+            return;
         }
         this._timeTick += dt;
-        if (this._timeTick > 0.1) {
-            this._timeTick = 0;
-            if (this._hurtColorLife > 0) {
-                this._hurtColorLife--;
-            }
-            if (this._hurtColorLife == 1) {
-                this.setColor( cc.WHITE );
-            }
+        if (this._timeTick > 0.1) { return; }
+
+        this._timeTick = 0;
+        if (this._hurtColorLife > 0) {
+            this._hurtColorLife--;
+        }
+        if (this._hurtColorLife == 1) {
+            this.setColor( cc.WHITE );
+        }
+        if(LL.CONTAINER.PLAYER!=null){
+            Math.atan2(LL.CONTAINER.PLAYER.getAngle())
         }
     },
     destroy:function () {
@@ -45,7 +55,7 @@ var Enemy = cc.Sprite.extend({
         a.setPosition(this.getPosition());
         this.getParent().addChild(a);
         //spark(this.getPosition(),this.getParent(), 1.2, 0.7);
-        cc.ArrayRemoveObject(LL.CONTAINER.ENEMIES,this);
+        cc.ArrayRemoveObject(LL.CONTAINER.ROBOTS,this);
         this.removeFromParentAndCleanup(true);
         if(LL.SOUND){
             cc.AudioEngine.getInstance().playEffect(s_sound_arrow_shot);
@@ -70,6 +80,6 @@ var Enemy = cc.Sprite.extend({
     }
 });
 
-Enemy.sharedEnemy = function(){
-    cc.SpriteFrameCache.getInstance().addSpriteFrames(s_plist_enemy, s_image_enemy_sprite);
+Robot.sharedRobot = function(){
+    return;
 };

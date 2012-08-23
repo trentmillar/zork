@@ -1,10 +1,3 @@
-//
-// MoonWarriors
-//
-// Handles the Game Logic
-//
-
-
 STATE_PLAYING = 0;
 STATE_GAMEOVER = 1;
 
@@ -103,6 +96,7 @@ var GameLayer = cc.Layer.extend({
             LL.CONTAINER.ENEMIES = [];
             LL.CONTAINER.ENEMY_BULLETS = [];
             LL.CONTAINER.PLAYER_BULLETS = [];
+            LL.CONTAINER.ROBOTS = [];
             LL.SCORE = 0;
             LL.LIFE = 4;
             this._state = STATE_PLAYING;
@@ -111,6 +105,7 @@ var GameLayer = cc.Layer.extend({
             Explosion.sharedExplosion();
             Enemy.sharedEnemy();
             Player.sharedPlayer();
+            //Robot.sharedRobot();
 
             this._levelManager = new LevelManager(this);
             this.initBackground();
@@ -137,6 +132,7 @@ var GameLayer = cc.Layer.extend({
 
             // ship
             this._player = new Player();
+            LL.CONTAINER.PLAYER = this.addNewBody(_player);
             this.addChild(this._player, this._player.zOrder, LL.UNIT_TAG.PLAYER);
 
             // accept touch now!
@@ -162,6 +158,35 @@ var GameLayer = cc.Layer.extend({
             bRet = true;
         }
         return bRet;
+    },
+    addNewBody:function (sprite) {
+
+        // Define the dynamic body.
+        //Set up a 1m squared box in the physics world
+        var b2BodyDef = Box2D.Dynamics.b2BodyDef
+            , b2Body = Box2D.Dynamics.b2Body
+            , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+            , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+
+]       var bodyDef = new b2BodyDef();
+        bodyDef.type = b2Body.b2_dynamicBody;
+        bodyDef.position.Set(sprite.getPosition().x / PTM_RATIO, sprite.getPosition().y / PTM_RATIO);
+        bodyDef.userData = sprite;
+        var body = this._world.CreateBody(bodyDef);
+
+        // Define another box shape for our dynamic body.
+        var spriteShape = new b2PolygonShape();
+        spriteShape.SetAsBox(sprite.getBoundingBoxToWorld().size.width / PTM_RATIO,
+            sprite.getBoundingBoxToWorld().size.height / PTM_RATIO);//These are mid points for our 1m box
+
+        // Define the dynamic body fixture.
+        var fixtureDef = new b2FixtureDef();
+        fixtureDef.shape = spriteShape;
+        fixtureDef.density = 1.0;
+        fixtureDef.friction = 0.3;
+        body.CreateFixture(fixtureDef);
+        return body;
+
     },
     addNewSpriteWithCoords:function (p) {
         //UXLog(L"Add sprite %0.2f x %02.f",p.x,p.y);
@@ -223,6 +248,18 @@ var GameLayer = cc.Layer.extend({
     },
     onTouchesEnded: function (touches, event) {
         this._isTouch = false;
+
+        //Add a new body/atlas sprite at the touched location
+        for (var it = 0; it < touches.length; it++) {
+            var touch = touches[it];
+
+            if (!touch)
+                break;
+
+            var location = touch.getLocation();
+            //location = cc.Director.getInstance().convertToGL(location);
+            this.addNewSpriteWithCoords(location);
+        }
     },
     onMouseDragged: function (event) {
         if (this._isTouch) {
