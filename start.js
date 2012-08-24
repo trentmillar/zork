@@ -16,6 +16,7 @@ var LL = LL || {};
             'src/config/Level.js',
             'src/Bullet.js',
             'src/Enemy.js',
+            'src/Robot.js',
             'src/Explosion.js',
             'src/Player.js',
             'src/LevelManager.js',

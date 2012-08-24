@@ -12,6 +12,7 @@ var GameLayer = cc.Layer.extend({
     _backSkyRe: null,
     _backTileMap: null,
     _backTileMapHeight: 0,
+    _backTileMapWidth: 0,
     _backTileMapRe: null,
     _levelManager: null,
     _tmpScore: 0,
@@ -78,11 +79,12 @@ var GameLayer = cc.Layer.extend({
         this._world.CreateBody(bodyDef).CreateFixture(fixDef);
         
         //Set up sprite
-
+/*
         var mgr = cc.SpriteBatchNode.create(s_image_hit, 150);
         this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
         this.addNewSpriteWithCoords(cc.p(winSize.width / 2, winSize.height / 2));
+*/
 /*
 
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
@@ -105,7 +107,7 @@ var GameLayer = cc.Layer.extend({
             Explosion.sharedExplosion();
             Enemy.sharedEnemy();
             Player.sharedPlayer();
-            //Robot.sharedRobot();
+            Robot.sharedRobot();
 
             this._levelManager = new LevelManager(this);
             this.initBackground();
@@ -122,7 +124,7 @@ var GameLayer = cc.Layer.extend({
             var life = cc.Sprite.createWithTexture(playerTexture, cc.rect(0, 0, 100, 100));
             life.setScale(0.4);
             life.setPosition(cc.p(30, winSize.width - 20)); // 748));
-            this.addChild(life, 1, 5);
+            this.addChild(life, 1000, 5);
 
             // ship Life count
             this._lbLife = cc.LabelTTF.create("0", "Arial", 20);
@@ -132,7 +134,8 @@ var GameLayer = cc.Layer.extend({
 
             // ship
             this._player = new Player();
-            LL.CONTAINER.PLAYER = this.addNewBody(_player);
+            LL.CONTAINER.PLAYER = this.addNewBody(this._player);
+            //LL.CONTAINER.PLAYER = this.addNewBody(_player);
             this.addChild(this._player, this._player.zOrder, LL.UNIT_TAG.PLAYER);
 
             // accept touch now!
@@ -159,25 +162,25 @@ var GameLayer = cc.Layer.extend({
         }
         return bRet;
     },
-    addNewBody:function (sprite) {
+    addNewBody:function (thesprite) {
 
         // Define the dynamic body.
         //Set up a 1m squared box in the physics world
-        var b2BodyDef = Box2D.Dynamics.b2BodyDef
+       var b2BodyDef = Box2D.Dynamics.b2BodyDef
             , b2Body = Box2D.Dynamics.b2Body
             , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
             , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
 
-]       var bodyDef = new b2BodyDef();
+       var bodyDef = new b2BodyDef();
         bodyDef.type = b2Body.b2_dynamicBody;
-        bodyDef.position.Set(sprite.getPosition().x / PTM_RATIO, sprite.getPosition().y / PTM_RATIO);
-        bodyDef.userData = sprite;
+        bodyDef.position.Set(thesprite.getPosition().x / PTM_RATIO, thesprite.getPosition().y / PTM_RATIO);
+        bodyDef.userData = thesprite;
         var body = this._world.CreateBody(bodyDef);
 
         // Define another box shape for our dynamic body.
         var spriteShape = new b2PolygonShape();
-        spriteShape.SetAsBox(sprite.getBoundingBoxToWorld().size.width / PTM_RATIO,
-            sprite.getBoundingBoxToWorld().size.height / PTM_RATIO);//These are mid points for our 1m box
+        spriteShape.SetAsBox(thesprite.getBoundingBoxToWorld().size.width / PTM_RATIO,
+            thesprite.getBoundingBoxToWorld().size.height / PTM_RATIO);//These are mid points for our 1m box
 
         // Define the dynamic body fixture.
         var fixtureDef = new b2FixtureDef();
@@ -256,9 +259,9 @@ var GameLayer = cc.Layer.extend({
             if (!touch)
                 break;
 
-            var location = touch.getLocation();
+            //var location = touch.getLocation();
             //location = cc.Director.getInstance().convertToGL(location);
-            this.addNewSpriteWithCoords(location);
+            //this.addNewSpriteWithCoords(location);
         }
     },
     onMouseDragged: function (event) {
@@ -292,8 +295,11 @@ var GameLayer = cc.Layer.extend({
             this.checkIsReborn();
             this.updateUI();
 
+            this.setView(this._player.getPosition());
+
+
             /*BOX2D*/
-            //It is recommended that a fixed time step is used with Box2D for stability
+            /*//It is recommended that a fixed time step is used with Box2D for stability
             //of the simulation, however, we are using a variable time step here.
             //You need to make an informed choice, the following URL is useful
             //http://gafferongames.com/game-physics/fix-your-timestep/
@@ -314,11 +320,24 @@ var GameLayer = cc.Layer.extend({
                     myActor.setRotation(-1 * cc.RADIANS_TO_DEGREES(b.GetAngle()));
                     //console.log(b.GetAngle());
                 }
-            }
+            }*/
         }
 
         //if( cc.config.deviceType == 'browser' )
         //   cc.$("#cou").innerHTML = "Ship:" + 1 + ", Enemy: " + LL.CONTAINER.ENEMIES.length + ", Bullet:" + LL.CONTAINER.ENEMY_BULLETS.length + "," + LL.CONTAINER.PLAYER_BULLETS.length + " all:" + this.getChildren().length;
+    },
+    setView: function(position) {
+        var winSize = cc.Director.getInstance().getWinSize();
+
+        var x = Math.max(position.x, winSize.width / 2);
+        var y = Math.max(position.y, winSize.height / 2);
+        x = Math.min(x, (this._backTileMapWidth) - winSize.width / 2);
+        y = Math.min(y, (this._backTileMapHeight) - winSize.height/2);
+        var actualPosition = cc.p(x, y);
+
+        var centerOfView = cc.p(winSize.width/2, winSize.height/2);
+        var viewPoint = cc.pSub(centerOfView, actualPosition);
+        this._backTileMap.setPosition(viewPoint);
     },
     checkIsCollide: function () {
         var selChild, bulletChild;
@@ -409,28 +428,29 @@ var GameLayer = cc.Layer.extend({
     },
     initBackground: function () {
         // bg
-        this._backSky = cc.Sprite.create(s_image_background_01);
+        /*this._backSky = cc.Sprite.create(s_image_background_01);
         this._backSky.setAnchorPoint(cc.p(0, 0));
         this._backSkyHeight = this._backSky.getContentSize().height;
         this.addChild(this._backSky, -10);
-
+*/
         //tilemap
         this._backTileMap = cc.TMXTiledMap.create(s_level_01);
         this.addChild(this._backTileMap, -9);
         this._backTileMapHeight = this._backTileMap.getMapSize().height * this._backTileMap.getTileSize().height;
+        this._backTileMapWidth = this._backTileMap.getMapSize().width * this._backTileMap.getTileSize().width;
 
         //start scrolling
-        this._backSkyHeight -= 48;
-        this._backTileMapHeight -= 200;
-        this._backSky.runAction(cc.MoveBy.create(3, cc.p(0, -48)));
-        this._backTileMap.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
+        /*this._backSkyHeight -= 48;
+        this._backSky.runAction(cc.MoveBy.create(3, cc.p(0, -48)));*/
+        //this._backTileMapHeight -= 200;
+        //this._backTileMap.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
 
-        this.schedule(this.movingBackground, 3);
+       // this.schedule(this.movingBackground, 3);
     },
     movingBackground: function () {
         this._backSky.runAction(cc.MoveBy.create(3, cc.p(0, -48)));
-        this._backTileMap.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
         this._backSkyHeight -= 48;
+        this._backTileMap.runAction(cc.MoveBy.create(3, cc.p(0, -200)));
         this._backTileMapHeight -= 200;
 
         if (this._backSkyHeight <= winSize.height) {

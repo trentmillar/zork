@@ -99,6 +99,7 @@ var Player = cc.Sprite.extend({
 
         // Keys are only enabled on the browser
         if( cc.config.deviceType == 'browser' ) {
+            //non box2d
             var pos = this.getPosition();
             if ((LL.KEYS[cc.KEY.w] || LL.KEYS[cc.KEY.up]) && pos.y <= winSize.height) {
                 pos.y += dt * this.speed;
@@ -113,6 +114,23 @@ var Player = cc.Sprite.extend({
                 pos.x += dt * this.speed;
             }
             this.setPosition( pos );
+
+            //box2d
+           /* var pos2 = LL.CONTAINER.PLAYER.GetPosition();
+            if ((LL.KEYS[cc.KEY.w] || LL.KEYS[cc.KEY.up]) && pos2.y * PTM_RATIO <= winSize.height) {
+                pos2.y += (dt * this.speed) / PTM_RATIO;
+            }
+            if ((LL.KEYS[cc.KEY.s] || LL.KEYS[cc.KEY.down]) && pos2.y * PTM_RATIO >= 0) {
+                pos2.y -= (dt * this.speed) / PTM_RATIO;
+            }
+            if ((LL.KEYS[cc.KEY.a] || LL.KEYS[cc.KEY.left]) && pos2.x * PTM_RATIO >= 0) {
+                pos2.x -= (dt * this.speed) / PTM_RATIO;
+            }
+            if ((LL.KEYS[cc.KEY.d] || LL.KEYS[cc.KEY.right]) && pos2.x * PTM_RATIO <= winSize.width) {
+                pos2.x += (dt * this.speed) / PTM_RATIO;
+            }
+            LL.CONTAINER.PLAYER.SetPosition( pos2 );
+            */
         }
 
         if (this.HP <= 0) {

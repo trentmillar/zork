@@ -31,6 +31,16 @@ var LevelManager = cc.Class.extend({
 
     loadLevelResource:function(deltaTime){
         //load enemy
+
+        if(LL.CONTAINER.ROBOTS.length==0){
+            var robot = new Robot(RobotType[0]);
+            var body = this._gameLayer.addNewBody(robot);
+            LL.CONTAINER.ROBOTS.push(body);
+        }
+
+        //hack
+        return;
+
         for(var i = 0; i< this._currentLevel.enemies.length; i++){
             var selEnemy = this._currentLevel.enemies[i];
             if(selEnemy){

@@ -35,7 +35,7 @@ var s_image_explosion_sprite = s_imageDirectory + "explosion.png";
 var s_image_enemy_sprite = s_imageDirectory + "enemy.png";
 var s_image_bullet_sprite = s_imageDirectory + "bullet.png";
 var s_image_hit = s_imageDirectory + "hit.jpg";
-var s_image_triangle = s_imageDirectory + "triangle.png";
+var s_image_robot_sprite = s_imageDirectory + "robot.png";
 
 //music
 var s_music_theme = s_musicDirectory + "theme" + musicSuffix;
@@ -48,6 +48,7 @@ var s_plist_explosion = s_plistDirectory + "explosion.plist";
 var s_plist_player = s_plistDirectory + "player.plist";
 var s_plist_enemy = s_plistDirectory + "enemy.plist";
 var s_plist_bullet = s_plistDirectory + "bullet.plist";
+var s_plist_robot = s_plistDirectory + "robot.plist";
 
 //image
 //var s_bg01 = dirImg + "bg01.jpg";
@@ -105,7 +106,7 @@ var g_resources = [
     { type: "image", src: s_image_bullet_sprite },
     { type: "image", src: s_image_hit },
     { type: "image", src: s_image_bullet_sprite },
-    { type: "image", src: s_image_triangle },
+    { type: "image", src: s_image_robot_sprite },
 
     //music
     {type:"bgm", src:s_music_theme},
@@ -117,6 +118,7 @@ var g_resources = [
     {type: "plist", src: s_plist_explosion },
     { type: "plist", src: s_plist_enemy },
     { type: "plist", src: s_plist_bullet },
+    { type: "plist", src: s_plist_robot },
     { type: "plist", src: s_plist_player }
 
     //image

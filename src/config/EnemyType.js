@@ -1,3 +1,14 @@
+var RobotType = [
+    {
+        type:0,
+        textureName:"triangleblue.png",
+        bulletType:"W2.png",
+        HP:1,
+        moveType:LL.ENEMY_MOVE_TYPE.SEEKER,
+        attackMode:LL.ENEMY_MOVE_TYPE.SEEKER,
+        scoreValue:15
+    }
+];
 var EnemyType = [
     {
         type:0,

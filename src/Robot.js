@@ -1,5 +1,3 @@
-var TAG_SPRITE_MANAGER=69;
-
 var Robot = cc.Sprite.extend({
     eID:0,
     active:true,
@@ -13,21 +11,27 @@ var Robot = cc.Sprite.extend({
     delayTime:10 + 1.2 * Math.random(),
     attackMode:LL.ENEMY_MOVE_TYPE.SEEKER,
     _hurtColorLife:0,
+    _sprite:null,
     ctor:function (arg) {
         // needed for JS-Bindings compatibility
         cc.associateWithNative( this, cc.Sprite );
 
+        var winSize = cc.Director.getInstance().getWinSize();
 
-        var mgr = cc.SpriteBatchNode.create(s_image_triangle, 15);
-        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
+        /*var mgr = cc.SpriteBatchNode.create(s_image_triangle, 15);
+        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);*/
 
         this.HP = arg.HP;
         this.moveType = arg.moveType;
         this.scoreValue = arg.scoreValue;
         this.attackMode = arg.attackMode;
 
+        //this._sprite = cc.Sprite.create(s_image_triangle);
+        //this._sprite.setPosition(Math.random() * winSize.width, Math.random() * winSize.height);
+        //this.addChild(this._sprite, 3000, 69);
         this.initWithSpriteFrameName(arg.textureName);
         //this.schedule(this.shoot, this.delayTime);
+        this.scheduleUpdate();
     },
     _timeTick:0,
     update:function (dt) {
@@ -46,7 +50,9 @@ var Robot = cc.Sprite.extend({
             this.setColor( cc.WHITE );
         }
         if(LL.CONTAINER.PLAYER!=null){
-            Math.atan2(LL.CONTAINER.PLAYER.getAngle())
+            var player = LL.CONTAINER.PLAYER;
+            var playerAngle = player.getAngle();
+            //Math.atan2(LL.CONTAINER.PLAYER.getAngle())
         }
     },
     destroy:function () {
@@ -81,5 +87,5 @@ var Robot = cc.Sprite.extend({
 });
 
 Robot.sharedRobot = function(){
-    return;
+    cc.SpriteFrameCache.getInstance().addSpriteFrames(s_plist_robot, s_image_robot_sprite);
 };
