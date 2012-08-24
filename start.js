@@ -15,6 +15,7 @@ var LL = LL || {};
             'src/config/EnemyType.js',
             'src/config/Level.js',
             'src/Bullet.js',
+            'src/Grenade.js',
             'src/Enemy.js',
             'src/Robot.js',
             'src/Explosion.js',

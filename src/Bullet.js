@@ -1,4 +1,3 @@
-//bullet
 var Bullet = cc.Sprite.extend({
     active:true,
     xVelocity:0,

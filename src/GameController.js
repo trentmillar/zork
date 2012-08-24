@@ -17,15 +17,16 @@
 
 
 LL.GameController = cc.Class.extend({
-    _curScene:null,
-    _gameState:LL.GAME_STATE.HOME,
-    _isNewGame:true,
-    _curLevel:LL.LEVEL.STAGE1,
-    _selectLevel:LL.LEVEL.STAGE1,
-    init:function () {
+    _curScene: null,
+    _gameTime: 0,
+    _gameState: LL.GAME_STATE.HOME,
+    _isNewGame: true,
+    _curLevel: LL.LEVEL.STAGE1,
+    _selectLevel: LL.LEVEL.STAGE1,
+    init: function () {
         return true;
     },
-    setCurScene:function (s) {
+    setCurScene: function (s) {
         if (this._curScene != s) {
             if (this._curScene !== null) {
                 this._curScene.onExit();
@@ -37,20 +38,28 @@ LL.GameController = cc.Class.extend({
             }
         }
     },
-    getCurScene:function () {
+    getCurScene: function () {
         return this._curScene;
     },
-    runGame:function () {
+    runGame: function () {
 
     },
-    newGame:function () {
+    newGame: function () {
 
     },
-    option:function () {
+    option: function () {
 
     },
-    about:function () {
+    about: function () {
 
+    },
+    setGameTime: function (dt) {
+        if (dt > 0) {
+            this._gameTime += dt;
+        }
+    },
+    getGameTime: function () {
+        return this._gameTime;
     }
 });
 

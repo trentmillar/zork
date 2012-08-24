@@ -73,7 +73,8 @@ LL.WEAPON_TYPE = {
 //unit tag
 LL.UNIT_TAG = {
     ENMEY_BULLET:900,
-    PLAYER_BULLET:901,
+    PLAYER_BULLET: 901,
+    PLAYER_GRENADE: 801,
     ENEMY:1000,
     PLAYER:1000
 };
@@ -89,9 +90,26 @@ LL.LIFEUP_SORCE = [50000, 100000, 150000, 200000, 250000, 300000];
 
 //container
 LL.CONTAINER = {
-    ENEMIES:[],
-    ENEMY_BULLETS:[],
-    PLAYER_BULLETS:[],
-    ROBOTS:[],
-    PLAYER:null
+    ENEMIES: [],
+    ENEMY_BULLETS: [],
+    PLAYER_BULLETS: [],
+    PLAYER_GRENADES: [],
+    ROBOTS: [],
+    PLAYER: null,
+    PLAYER_POWERUPS: 0x0,
+    addPowerup: function (a) {
+        LL.CONTAINER.PLAYER_POWERUPS |= a;
+    },
+    removePowerup: function (a) {
+        LL.CONTAINER.PLAYER_POWERUPS &= ~a;
+    },
+    containsPowerup: function (a) {
+        return LL.CONTAINER.PLAYER_POWERUPS & a == a;
+    }
+};
+
+//power ups
+LL.POWERUP = {
+    BULLET_AUTO: 0x1,
+    GRENADES: 0x2
 };

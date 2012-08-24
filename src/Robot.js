@@ -74,9 +74,9 @@ var Robot = cc.Sprite.extend({
         this.getParent().addChild(b, b.zOrder, LL.UNIT_TAG.ENMEY_BULLET);
         b.setPosition(cc.p(p.x, p.y - this.getContentSize().height * 0.2));
     },
-    hurt:function () {
+    hurt:function (damage) {
         this._hurtColorLife = 2;
-        this.HP--;
+        this.HP-=damage;
         this.setColor( cc.RED );
     },
     collideRect:function(){
